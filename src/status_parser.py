@@ -3,7 +3,6 @@ import asyncio
 from dotenv import dotenv_values
 from time import time
 
-ENV_RELATIVE_PATH = 
 
 class Parser(object):
     def __init__(self, api_id, api_hash, chat_ids, request_delay=0.5):
