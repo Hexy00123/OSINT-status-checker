@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from beanie import Document, Field, Link, TimeSeriesConfig
+from beanie import Document, Link, TimeSeriesConfig
 
 from src.storages.mongo.user import User
 
 
 class Status(Document):
-    ts: datetime = Field(default_factory=datetime.now)
+    ts: datetime
     user: Link[User]
     is_online: bool
 
@@ -18,5 +18,8 @@ class Status(Document):
 
 
 class StatusRepository:
-    async def create():
-        pass
+    async def create(self, status: Status):
+        return await status.create()
+
+
+status_repository = StatusRepository()
