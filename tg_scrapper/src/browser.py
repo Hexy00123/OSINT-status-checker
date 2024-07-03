@@ -1,12 +1,15 @@
+import time
+import requests
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
-import time
-from datetime import datetime
 
+
+API_URL = "https://api.example.com/"
 
 # Constants in seconds
 LOGIN_TIMEOUT = 60
@@ -37,14 +40,30 @@ def get_user_status(username):
     return "online" in status or 'just now' in status
 
 
-# Parsing loop
-usernames = []  # TODO: Insert usernames
-with open("user_statuses.txt", "a") as file:
-    while True:
-        if login_successful():
-            for username in usernames:
-                status = get_user_status(username)
-                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                file.write(f"{timestamp} {username} {status}\n")
-                print(f"{timestamp} {username} {status}")
-            time.sleep(STATUSES_PARSING_DELAY)
+response = requests.get(f"{API_URL}/users")
+if response.status_code == 200:
+    users = response.json()
+else:
+    print('Failed to fetch users', response)
+print(users)
+
+while True:
+    if login_successful() and users:
+        users_data = []
+        for user in users:
+            user_data = {
+                'ts': str(datetime.now()),
+                'user': {
+                    'id': user.id,
+                    'collection': 'User',
+                },
+                'is_online': get_user_status(user.username),
+            }
+            users_data.append(user_data)
+            print(user_data)
+
+        response = requests.post(f"{API_URL}/statuses", json=users_data)
+        if response.status_code != 200:
+            print(f"Failed to post user statuses", response)
+
+        time.sleep(STATUSES_PARSING_DELAY)
