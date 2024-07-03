@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src.routers import status, user
+from src.routers import user
 from src.lifespan import lifespan
 
 
