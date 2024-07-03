@@ -4,11 +4,10 @@ import requests
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException
-from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 
 
 API_URL = "http://backend:8000"
@@ -22,7 +21,9 @@ STATUSES_PARSING_DELAY = 10
 
 def scrapper_initialization():
     # Define driver
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    # options.add_argument('--headless')  # example
+    driver = webdriver.Remote("http://127.0.0.1:4444/wd/hub", options=options)
     wait = WebDriverWait(driver, STATUS_RENDERING_TIMEOUT)
     driver.get(f"https://web.telegram.org/k/")
     save_qr(driver)
