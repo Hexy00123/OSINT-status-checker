@@ -10,7 +10,7 @@ async def lifespan(app: FastAPI):
 
     scheduler = BackgroundScheduler()
 
-    driver, USERS = scrapper_initialization()
-    scheduler.add_job(scrapper_run, "interval", seconds=10, args=[driver, USERS])
+    driver, wait, USERS = scrapper_initialization()
+    scheduler.add_job(scrapper_run, "interval", seconds=10, args=[driver, wait, USERS])
     scheduler.start()
     yield

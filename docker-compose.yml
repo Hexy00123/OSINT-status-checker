@@ -1,6 +1,14 @@
 version: "3"
 
 services:
+  chrome:
+    image: selenium/standalone-chrome:latest
+    hostname: chrome
+    networks:
+      - osint
+    privileged: true
+    shm_size: 2g
+
   backend:
     build:
       context: ./backend
@@ -20,6 +28,7 @@ services:
       dockerfile: ./Dockerfile
     depends_on:
       - backend
+      - chrome
     networks:
       - osint
     ports:
