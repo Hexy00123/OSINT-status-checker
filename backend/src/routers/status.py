@@ -6,12 +6,12 @@ router = APIRouter(prefix="/status", tags=["Status"])
 
 
 @router.post("/")
-async def create(obj: StatusCreate):
+async def create(obj: StatusCreate) -> Status:
     return await status_repository.create(obj)
 
 
 @router.post("/create-many")
-async def create_many(objs: list[Status]):
+async def create_many(objs: list[StatusCreate]) -> list[str]:
     insert_many_result = await Status.insert_many(objs)
     return list(map(str, insert_many_result.inserted_ids))
 
