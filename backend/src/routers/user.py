@@ -10,7 +10,7 @@ async def create(obj: UserCreate) -> User:
     return await user_repository.create(obj)
 
 
-@router.post("create-many/")
+@router.post("/create-many")
 async def create_many(objs: list[UserCreate]) -> list[str]:
     return await user_repository.create_many(objs)
 
