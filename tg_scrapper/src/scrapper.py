@@ -23,7 +23,7 @@ def scrapper_initialization():
     # Define driver
     options = webdriver.ChromeOptions()
     # options.add_argument('--headless')  # example
-    driver = webdriver.Remote("http://127.0.0.1:4444/wd/hub", options=options)
+    driver = webdriver.Remote("http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=options)
     wait = WebDriverWait(driver, STATUS_RENDERING_TIMEOUT)
     driver.get(f"https://web.telegram.org/k/")
     save_qr(driver)
@@ -36,7 +36,7 @@ def scrapper_initialization():
     return driver, wait, users
 
 def save_qr(driver):
-    canvas = WebDriverWait(driver, 10).until(
+    canvas = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, 'canvas'))
     )
 
