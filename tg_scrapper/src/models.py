@@ -1,8 +1,7 @@
-from typing import Annotated, Literal
+from typing import Literal
 
-from beanie import Document, Indexed
+from pydantic import BaseModel
 
-
-class User(Document):
-    username: Annotated[str, Indexed(unique=True)]
+class User(BaseModel):
+    username: str
     app: Literal["tg", "vk"]

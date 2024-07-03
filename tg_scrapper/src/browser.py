@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 
 
-API_URL = "https://api.example.com/"
+API_URL = "http://localhost:8000"
 
 # Constants in seconds
 LOGIN_TIMEOUT = 60
@@ -40,7 +40,7 @@ def get_user_status(username):
     return "online" in status or 'just now' in status
 
 
-response = requests.get(f"{API_URL}/users")
+response = requests.get(f"{API_URL}/user")
 if response.status_code == 200:
     users = response.json()
 else:
@@ -62,7 +62,7 @@ while True:
             users_data.append(user_data)
             print(user_data)
 
-        response = requests.post(f"{API_URL}/statuses", json=users_data)
+        response = requests.post(f"{API_URL}/status", json=users_data)
         if response.status_code != 200:
             print(f"Failed to post user statuses", response)
 

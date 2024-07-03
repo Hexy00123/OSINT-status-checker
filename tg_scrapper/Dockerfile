@@ -1,11 +1,13 @@
-FROM 3.11.9-bookworm
+FROM python:3.10.14-slim
+
+RUN apt-get update \
+  && apt-get install -y curl \
+  && curl -sSL https://install.python-poetry.org | python -
 
 WORKDIR /tg_scrapper
+COPY ./poetry.lock ./pyproject.toml ./
+RUN /root/.local/bin/poetry install --no-root
 
-COPY ./tg_scrapper/requirements.txt /tg_scrapper/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /tg_scrapper/requirements.txt
+COPY ./ ./
 
-COPY ./tg_scrapper /tg_scrapper
-WORKDIR /tg_scrapper
-
-CMD ["python3", "-m", "src"]
+CMD ["/root/.local/bin/poetry", "run", "python", "-m", "src"]

@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 
 
-API_URL = "https://api.example.com/"
+API_URL = "http://backend:8000"
 
 # Constants in seconds
 LOGIN_TIMEOUT = 60
@@ -20,7 +20,7 @@ def scrapper_initialization():
     driver = webdriver.Chrome()
     driver.get(f"https://web.telegram.org/k/")
 
-    response = requests.get(f"{API_URL}/users")
+    response = requests.get(f"{API_URL}/user")
     if response.status_code == 200:
         users = response.json()
     else:
@@ -60,6 +60,6 @@ def scrapper_run(driver, users):
             }
             users_data.append(user_data)
 
-        response = requests.post(f"{API_URL}/statuses", json=users_data)
+        response = requests.post(f"{API_URL}/status", json=users_data)
         if response.status_code != 200:
             print(f"Failed to post user statuses", response)

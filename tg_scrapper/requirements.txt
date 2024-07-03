@@ -1,2 +1,0 @@
-Pyrogram==2.0.106
-selenium==4.22.0
