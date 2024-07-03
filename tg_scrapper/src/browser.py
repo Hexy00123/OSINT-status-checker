@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 import time
 from datetime import datetime
 
@@ -15,19 +16,16 @@ STATUSES_PARSING_DELAY = 60
 # Define driver
 driver = webdriver.Chrome()
 
-# Login
-
 
 def login_successful():
     try:
-        driver.find_element(By.CSS_SELECTOR, "div.page-chats")
-        return True
-    except:
+        driver.find_element(By.CSS_SELECTOR, "div.auth-image")
         return False
+    except NoSuchElementException:
+        return True
 
 
 driver.get(f"https://web.telegram.org/k/")
-WebDriverWait(driver, LOGIN_TIMEOUT).until(lambda driver: login_successful())
 
 
 def get_user_status(username):
@@ -40,12 +38,13 @@ def get_user_status(username):
 
 
 # Parsing loop
-usernames = []
+usernames = []  # TODO: Insert usernames
 with open("user_statuses.txt", "a") as file:
     while True:
-        for username in usernames:
-            status = get_user_status(username)
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            file.write(f"{timestamp} {username} {status}\n")
-            print(f"{timestamp} {username} {status}")
-        time.sleep(STATUSES_PARSING_DELAY)
+        if login_successful():
+            for username in usernames:
+                status = get_user_status(username)
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                file.write(f"{timestamp} {username} {status}\n")
+                print(f"{timestamp} {username} {status}")
+            time.sleep(STATUSES_PARSING_DELAY)
