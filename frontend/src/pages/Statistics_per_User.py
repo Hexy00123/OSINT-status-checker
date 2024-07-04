@@ -79,7 +79,7 @@ class StatisticsPerUserPage:
                 ax.set_xlim(0, 24)
                 ax.set_xticks(range(0, 25, 1))
                 ax.set_xlabel('Day Time')
-                ax.set_ylabel('Aggregated Users Online')
+                ax.set_ylabel('Aggregated User Online')
                 st.pyplot(fig)
 
 
