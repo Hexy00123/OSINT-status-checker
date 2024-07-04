@@ -5,7 +5,7 @@ from requests import get
 from config import API_URL
 
 
-def preprocess(data):
+def preprocess_data(data):
     preprocessed = []
 
     for user in data:
@@ -19,11 +19,12 @@ def preprocess(data):
             'is_online': user['is_online']
         })
 
-    preprocessed = sorted(filter(lambda x: x['is_online'], preprocessed), key=lambda x: x['ts'])
+    preprocessed = sorted(
+        filter(lambda x: x['is_online'], preprocessed), key=lambda x: x['ts'])
     return preprocessed
 
 
-def sliding_window(preprocessed, time_period_seconds=40):
+def init_graph_with_sliding_window(preprocessed, time_period_seconds=40):
     assert time_period_seconds > 0, 'Time delta must be greater than 0'
     graph = {}
 
