@@ -32,9 +32,9 @@ async def read_all() -> list[User]:
     return await user_repository.read_all()
 
 
-@router.delete("/")
-async def delete(id: str) -> User:
-    user = await user_repository.delete(id)
-    if not user:
-        raise HTTPException(status_code=404)
-    return user
+# @router.delete("/")
+# async def delete(id: str) -> User:
+#     user = await user_repository.delete(id)
+#     if not user:
+#         raise HTTPException(status_code=404)
+#     return user
