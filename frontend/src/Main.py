@@ -17,17 +17,25 @@ class MainPage():
 
         st.sidebar.subheader('Start')
         col1, col2 = st.sidebar.columns(2)
-        self.date_start = col1.date_input(
-            "Date", key="date_start", label_visibility="collapsed")
-        self.time_start = col2.time_input(
-            "Time", key="time_start", label_visibility="collapsed")
+        date_start = col1.date_input(
+            "Date", key="date_start", label_visibility="collapsed", value=None)
+        time_start = col2.time_input(
+            "Time", key="time_start", label_visibility="collapsed", value=None)
+        self.start_ts = None
+        if date_start is not None and time_start is not None:
+            self.start_ts = datetime.timestamp(
+                datetime.combine(date_start, time_start))
 
         st.sidebar.subheader('End')
         col3, col4 = st.sidebar.columns(2)
-        self.date_end = col3.date_input(
-            "Date", key="date_end", label_visibility="collapsed")
-        self.time_end = col4.time_input(
-            "Time", key="time_end", label_visibility="collapsed")
+        date_end = col3.date_input(
+            "Date", key="date_end", label_visibility="collapsed", value=None)
+        time_end = col4.time_input(
+            "Time", key="time_end", label_visibility="collapsed", value=None)
+        self.end_ts = None
+        if date_end is not None and time_end is not None:
+            self.end_ts = datetime.timestamp(
+                datetime.combine(date_end, time_end))
 
         st.sidebar.header('Intercations Threshold (%)')
         st.sidebar.caption(
@@ -45,7 +53,9 @@ class MainPage():
         st.subheader(
             'Possible users interactions graph')
         with st.spinner():
-            raw_data = get(API_URL + "/status").json()
+            raw_data = get(API_URL + '/status', params={'start': self.start_ts,
+                                                        'end': self.end_ts}
+                           ).json()
             data = preprocess_data(raw_data)
 
             graph = init_graph_with_sliding_window(
