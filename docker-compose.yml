@@ -6,8 +6,6 @@ services:
     hostname: chrome
     networks:
       - osint
-    ports:
-      - 4444:4444
     privileged: true
     shm_size: 2g
 
@@ -44,8 +42,6 @@ services:
     container_name: mongo
     networks:
       - osint
-    ports:
-      - 27017:27017
     volumes:
       - mongo_data:/data/db/
     env_file:
