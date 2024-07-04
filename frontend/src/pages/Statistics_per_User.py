@@ -54,23 +54,27 @@ class StatisticsPerUserPage:
         col1, col2 = st.columns([4, 1])
         col1.subheader('User online distribution')
 
-        if 'users' not in st.session_state:
-            st.session_state['users'] = fetch_users()
-        usernames = [user['username'] for user in st.session_state['users']]
-        self.selected_user = col2.selectbox(
-            "Select User", usernames, index=None, placeholder="Select user", label_visibility="collapsed")
+        with st.spinner():
+            if 'users' not in st.session_state:
+                st.session_state['users'] = fetch_users()
+            usernames = [user['username']
+                         for user in st.session_state['users']]
+            self.selected_user = col2.selectbox(
+                "Select User", usernames, index=None, placeholder="Select user", label_visibility="collapsed")
 
         self.show_plot()
 
     def show_plot(self):
         if self.selected_user is not None:
             with st.spinner():
-                raw_data = get(API_URL + '/status', params={'username': self.selected_user,
-                                                            'start': self.start_ts,
-                                                            'end': self.end_ts}
+                raw_data = get(API_URL + '/status/read-by', params={'username': self.selected_user,
+                                                                    'start': self.start_ts,
+                                                                    'end': self.end_ts}
                                ).json()
                 data = preprocess_data_for_distribution(raw_data)
-
+                if len(data) == 0:
+                    st.warning('No data found')
+                    return
                 fig, ax = plt.subplots(
                     figsize=(self.plot_width, self.plot_height))
 

@@ -56,8 +56,8 @@ class StatisticsPage:
         st.subheader(
             'Users online distribution')
         with st.spinner():
-            raw_data = get(API_URL + '/status', params={'start': self.start_ts,
-                                                        'end': self.end_ts}
+            raw_data = get(API_URL + '/status/read-by', params={'start': self.start_ts,
+                                                                'end': self.end_ts}
                            ).json()
             data = preprocess_data_for_distribution(raw_data)
 

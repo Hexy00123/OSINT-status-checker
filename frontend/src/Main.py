@@ -53,8 +53,8 @@ class MainPage():
         st.subheader(
             'Possible users interactions graph')
         with st.spinner():
-            raw_data = get(API_URL + '/status', params={'start': self.start_ts,
-                                                        'end': self.end_ts}
+            raw_data = get(API_URL + '/status/read-by', params={'start': self.start_ts,
+                                                                'end': self.end_ts}
                            ).json()
             data = preprocess_data(raw_data)
 
