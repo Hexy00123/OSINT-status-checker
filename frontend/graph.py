@@ -9,6 +9,10 @@ from requests import get
 URL = 'http://158.160.101.116:8000'
 
 
+st.title("Graph")
+# TODO
+
+
 def make_graph(g: dict, r=400):
     nodes = []
     edges = []
@@ -55,7 +59,8 @@ def preprocess(data):
 
     for user in data:
         user['ts'] = user['ts'].split('.')[0]
-        datetime_ts = datetime.datetime.strptime(user['ts'], '%Y-%m-%dT%H:%M:%S')
+        datetime_ts = datetime.datetime.strptime(
+            user['ts'], '%Y-%m-%dT%H:%M:%S')
 
         preprocessed.append({
             'username': user['username'],
@@ -116,6 +121,8 @@ data = preprocess(raw_data)
 graph = sliding_window(data, time_period_seconds=60)
 
 if 'nodes' not in st.session_state:
-    st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(graph, r=500)
+    st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(
+        graph, r=500)
 
-agraph(nodes=st.session_state.nodes, edges=st.session_state.edges, config=st.session_state.config)
+agraph(nodes=st.session_state.nodes, edges=st.session_state.edges,
+       config=st.session_state.config)
