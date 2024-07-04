@@ -29,9 +29,11 @@ class MainPage():
         self.time_end = col4.time_input(
             "Time", key="time_end", label_visibility="collapsed")
 
-        st.sidebar.header('Intercations Threshold')
+        st.sidebar.header('Intercations Threshold (%)')
+        st.sidebar.caption(
+            'The lower the number, the more connected users will be')
         interactions_threshold = st.sidebar.slider(
-            "Threshold", 0, 100, 10, label_visibility="collapsed") / 100
+            "Threshold", 0, 100, 10, label_visibility="collapsed", format="%d%%") / 100
 
         st.sidebar.subheader('Physics')
         physics = st.sidebar.checkbox('Physics')

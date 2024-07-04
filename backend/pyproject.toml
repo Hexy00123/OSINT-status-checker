@@ -11,7 +11,7 @@ fastapi = "^0.111.0"
 motor = "^3.5.0"
 beanie = "^1.26.0"
 pydantic = "^2.8.0"
-
+requests = "^2.32.3"
 
 [build-system]
 requires = ["poetry-core"]
