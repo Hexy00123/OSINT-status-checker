@@ -7,9 +7,20 @@ st.sidebar.title("User Status Analyzer")
 
 
 # Filters shared by all the pages TODO
-st.sidebar.selectbox("Foo", ["A", "B", "C"], key="foo")
-st.sidebar.checkbox("Bar", key="bar")
-st.sidebar.button('Refresh', use_container_width=True)
+st.sidebar.header('Date & Time Interval')
+
+st.sidebar.subheader('Start')
+st.sidebar.date_input("Date", key="date_start", label_visibility="collapsed")
+st.sidebar.time_input("Time", key="time_start", label_visibility="collapsed")
+
+st.sidebar.subheader('End')
+st.sidebar.date_input("Date", key="date_end", label_visibility="collapsed")
+st.sidebar.time_input("Time", key="time_end", label_visibility="collapsed")
+
+st.sidebar.header('Intercations Threshold')
+st.sidebar.slider("Threshold", 0, 100, 10, label_visibility="collapsed")
+
+st.sidebar.button('🔄 Refresh', type="primary", use_container_width=True)
 
 pg = st.navigation(
     [
