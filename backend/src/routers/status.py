@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from fastapi import APIRouter, HTTPException
+from pymongo.errors import DuplicateKeyError
 
 from src.storages.mongo.status import Status, StatusCreate, status_repository
-from pymongo.errors import DuplicateKeyError
 
 router = APIRouter(prefix="/status", tags=["Status"])
 
@@ -25,6 +27,15 @@ async def create_many(objs: list[StatusCreate]) -> list[str]:
         except DuplicateKeyError:
             pass
     return status_ids
+
+
+@router.get("/read-by")
+async def read_by(
+    username: str | None = None,
+    start: datetime | None = None,
+    end: datetime | None = None,
+) -> list[Status]:
+    return await status_repository.read_by(username, start, end)
 
 
 @router.get("/")
