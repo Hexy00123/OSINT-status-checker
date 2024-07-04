@@ -40,9 +40,12 @@ class MainPage():
             interactions_threshold=interactions_threshold, physics=physics)
 
     def show_graph(self, interactions_threshold, physics):
+        st.subheader(
+            'Possible users interactions graph')
         with st.spinner():
             raw_data = get(API_URL + "/status").json()
             data = preprocess_data(raw_data)
+
             graph = init_graph_with_sliding_window(
                 data, time_period_seconds=20)
 

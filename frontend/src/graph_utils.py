@@ -104,6 +104,7 @@ def make_graph(g: dict, interactions_threshold=0.15, physics=False):
 
     config = Config(
         width=1600,
+        height=700,
         directed=False,
         physics=physics,
     )
