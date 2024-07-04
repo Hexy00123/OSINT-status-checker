@@ -4,58 +4,6 @@ import datetime
 from requests import get
 from config import API_URL
 
-st.title("Graph")
-
-
-def make_graph(g: dict):
-    nodes = []
-    edges = []
-
-    users = list({node for pair in g.keys() for node in pair})
-    added_nodes = set()
-
-    min_edge, max_edge = min(g.values()), max(g.values())
-    for pair, edge in g.items():
-        if edge >= min_edge + (max_edge - min_edge) * 0.13:
-            if pair[0] not in added_nodes:
-                nodes.append(Node(id=pair[0], label=pair[0], size=15))
-                added_nodes.add(pair[0])
-            if pair[1] not in added_nodes:
-                nodes.append(Node(id=pair[1], label=pair[1], size=15))
-                added_nodes.add(pair[1])
-
-            edges.append(Edge(
-                source=pair[0],
-                label=str(edge),
-                target=pair[1],
-                color={
-                    'color': '#999999',
-                    'highlight': '#CC0000',
-                },
-                value=edge,
-                scaling={
-                    'min': 1,
-                    'max': 6,
-                    'label': {
-                        'enabled': False
-                    }
-                },
-            ))
-
-    # for i, node in enumerate(users):
-    #     nodes.append(Node(
-    #         id=i, label=node, size=15,
-    #     ))
-
-    config = Config(
-        width=1600,
-        directed=False,
-        static=False,
-        physics=0,
-    )
-
-    return nodes, edges, config
-
 
 def preprocess(data):
     preprocessed = []
@@ -119,13 +67,44 @@ def sliding_window(preprocessed, time_period_seconds=40):
     return graph
 
 
-with st.spinner():
-    raw_data = get(API_URL + "/status").json()
-    data = preprocess(raw_data)
-    graph = sliding_window(data, time_period_seconds=20)
+def make_graph(g: dict, interactions_threshold=0.15, physics=False):
+    nodes = []
+    edges = []
 
-    if 'nodes' not in st.session_state:
-        st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(graph)
+    added_nodes = set()
 
-    agraph(nodes=st.session_state.nodes, edges=st.session_state.edges,
-           config=st.session_state.config)
+    min_edge, max_edge = min(g.values()), max(g.values())
+    for pair, edge in g.items():
+        if edge >= min_edge + (max_edge - min_edge) * interactions_threshold:
+            if pair[0] not in added_nodes:
+                nodes.append(Node(id=pair[0], label=pair[0], size=15))
+                added_nodes.add(pair[0])
+            if pair[1] not in added_nodes:
+                nodes.append(Node(id=pair[1], label=pair[1], size=15))
+                added_nodes.add(pair[1])
+
+            edges.append(Edge(
+                source=pair[0],
+                label=str(edge),
+                target=pair[1],
+                color={
+                    'color': '#999999',
+                    'highlight': '#CC0000',
+                },
+                value=edge,
+                scaling={
+                    'min': 1,
+                    'max': 9,
+                    'label': {
+                        'enabled': False
+                    }
+                },
+            ))
+
+    config = Config(
+        width=1600,
+        directed=False,
+        physics=physics,
+    )
+
+    return nodes, edges, config
