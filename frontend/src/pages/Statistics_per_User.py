@@ -2,13 +2,14 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statistics_utils import preprocess_data_for_distribution
+from users_utils import fetch_users
 from config import API_URL, init_app
 from requests import get
 from datetime import datetime
 
 
-class StatisticsPage:
-    PAGE_NAME = 'Statistics'
+class StatisticsPerUserPage:
+    PAGE_NAME = 'Statistics per User'
 
     def __init__(self):
         init_app(self.PAGE_NAME)
@@ -50,28 +51,37 @@ class StatisticsPage:
         self.plot_height = st.sidebar.slider(
             "plot height", 1, 25, 8, label_visibility="collapsed")
 
+        col1, col2 = st.columns([4, 1])
+        col1.subheader('User online distribution')
+
+        if 'users' not in st.session_state:
+            st.session_state['users'] = fetch_users()
+        usernames = [user['username'] for user in st.session_state['users']]
+        self.selected_user = col2.selectbox(
+            "Select User", usernames, index=None, placeholder="Select user", label_visibility="collapsed")
+
         self.show_plot()
 
     def show_plot(self):
-        st.subheader(
-            'Users online distribution')
-        with st.spinner():
-            raw_data = get(API_URL + '/status', params={'start': self.start_ts,
-                                                        'end': self.end_ts}
-                           ).json()
-            data = preprocess_data_for_distribution(raw_data)
+        if self.selected_user is not None:
+            with st.spinner():
+                raw_data = get(API_URL + '/status', params={'username': self.selected_user,
+                                                            'start': self.start_ts,
+                                                            'end': self.end_ts}
+                               ).json()
+                data = preprocess_data_for_distribution(raw_data)
 
-            fig, ax = plt.subplots(
-                figsize=(self.plot_width, self.plot_height))
+                fig, ax = plt.subplots(
+                    figsize=(self.plot_width, self.plot_height))
 
-            sns.histplot(data, ax=ax, bins=self.bins,
-                         alpha=0.25, color='blue', kde=True)
-            ax.set_xlim(0, 24)
-            ax.set_xticks(range(0, 25, 1))
-            ax.set_xlabel('Day Time')
-            ax.set_ylabel('Aggregated Users Online')
-            st.pyplot(fig)
+                sns.histplot(data, ax=ax, bins=self.bins,
+                             alpha=0.25, color='blue', kde=True)
+                ax.set_xlim(0, 24)
+                ax.set_xticks(range(0, 25, 1))
+                ax.set_xlabel('Day Time')
+                ax.set_ylabel('Aggregated Users Online')
+                st.pyplot(fig)
 
 
 if __name__ == '__main__':
-    StatisticsPage()
+    StatisticsPerUserPage()
