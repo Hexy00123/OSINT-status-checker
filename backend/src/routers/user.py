@@ -21,7 +21,7 @@ async def create_many(objs: list[UserCreate]) -> list[str]:
     for obj in objs:
         try:
             user = await user_repository.create(obj)
-            user_ids.append(user.id)
+            user_ids.append(str(user.id))
         except DuplicateKeyError:
             pass
     return user_ids
