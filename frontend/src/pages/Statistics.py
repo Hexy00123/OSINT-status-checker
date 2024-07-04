@@ -7,7 +7,6 @@ from requests import get
 
 
 class StatisticsPage:
-
     PAGE_NAME = 'Statistics'
 
     def __init__(self):
