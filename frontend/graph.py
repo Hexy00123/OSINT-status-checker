@@ -31,7 +31,8 @@ def make_graph(g: dict, r=400):
                 label=str(edge),
                 target=users.index(pair[1]),
                 color={
-                    'color': '#999999'
+                    'color': '#999999',
+                    'highlight': '#FF0000',
                 },
                 value=edge,
                 scaling={
@@ -40,15 +41,21 @@ def make_graph(g: dict, r=400):
                     'label': {
                         'enabled': False
                     }
-                }
+                },
+                chosen={
+                    'edge': {
+                        'shadow': True,
+                        'shadowColor': '#000000'
+                    }
+                },
             ))
 
     config = Config(
-        # width=1200,
+        # width=200,
         # height=1000,
         directed=False,
         static=True,
-        physics=True,
+        physics=False,
     )
 
     return nodes, edges, config
@@ -118,7 +125,7 @@ def sliding_window(preprocessed, time_period_seconds=40):
 
 raw_data = get(URL + "/status").json()
 data = preprocess(raw_data)
-graph = sliding_window(data, time_period_seconds=60)
+graph = sliding_window(data, time_period_seconds=45)
 
 if 'nodes' not in st.session_state:
     st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(
