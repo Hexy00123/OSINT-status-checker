@@ -13,18 +13,20 @@ class MainPage():
         init_app(self.PAGE_NAME)
         st.title(self.PAGE_NAME)
 
-        st.sidebar.header('Date & Time Interval')
+        st.sidebar.header('Date & Time Interval (UTC)')
 
         st.sidebar.subheader('Start')
-        self.date_start = st.sidebar.date_input(
+        col1, col2 = st.sidebar.columns(2)
+        self.date_start = col1.date_input(
             "Date", key="date_start", label_visibility="collapsed")
-        self.time_start = st.sidebar.time_input(
+        self.time_start = col2.time_input(
             "Time", key="time_start", label_visibility="collapsed")
 
         st.sidebar.subheader('End')
-        self.date_end = st.sidebar.date_input(
+        col3, col4 = st.sidebar.columns(2)
+        self.date_end = col3.date_input(
             "Date", key="date_end", label_visibility="collapsed")
-        self.time_end = st.sidebar.time_input(
+        self.time_end = col4.time_input(
             "Time", key="time_end", label_visibility="collapsed")
 
         st.sidebar.header('Intercations Threshold')
