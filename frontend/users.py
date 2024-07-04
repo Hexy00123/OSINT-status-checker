@@ -44,11 +44,12 @@ st.title("Users")
 # Add new user
 col1, col2 = st.columns([5, 1])
 with col1:
-    new_user_name = st.text_input("")
+    new_user_name = st.text_input("", label_visibility="collapsed")
 with col2:
-    if st.button("Add User", use_container_width=True):
+    if st.button("Add User", use_container_width=True, type='primary'):
         # add_user(new_user_name)
         st.experimental_rerun()
+st.divider()
 
 
 # Display and edit users
@@ -56,13 +57,13 @@ for user in [{"id": 321312, "username": 'sdasd'}, {"id": 2, "username": 'sdasd'}
     col1, col2, col3 = st.columns([5, 0.5, 0.5])
     with col1:
         new_username = st.text_input(
-            "", value=user['username'], key=f"edit_{user['id']}")
+            "", value=user['username'], key=f"edit_{user['id']}", label_visibility="collapsed")
     with col2:
-        if st.button("✍️", key=f"update_{user['id']}"):
+        if st.button("✍️", key=f"update_{user['id']}", use_container_width=True):
             update_user(user['id'], new_username)
             st.experimental_rerun()
     with col3:
-        if st.button("🗑", key=f"delete_{user['id']}"):
+        if st.button("🗑", key=f"delete_{user['id']}", use_container_width=True):
             delete_user(user['id'])
             st.experimental_rerun()
 
