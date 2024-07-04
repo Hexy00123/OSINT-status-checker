@@ -29,11 +29,6 @@ class UserRepository:
         user = User(**obj.model_dump())
         return await user.insert()
 
-    async def create_many(self, objs: list[UserCreate]) -> list[str]:
-        users = [User(**obj.model_dump()) for obj in objs]
-        insert_many_result = await User.insert_many(users)
-        return insert_many_result.inserted_ids
-
     async def read(self, id: str) -> User:
         return await User.find_one({"_id": PydanticObjectId(id)})
 
