@@ -1,6 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
-from statistics_utils import preprocess_data
+import seaborn as sns
+from statistics_utils import preprocess_data_for_general_distribution
 from config import API_URL, init_app
 from requests import get
 
@@ -13,28 +14,54 @@ class StatisticsPage:
         init_app(self.PAGE_NAME)
         st.title(self.PAGE_NAME)
 
+        st.sidebar.header('Date & Time Interval (UTC)')
+
+        st.sidebar.subheader('Start')
+        col1, col2 = st.sidebar.columns(2)
+        self.date_start = col1.date_input(
+            "Date", key="date_start", label_visibility="collapsed")
+        self.time_start = col2.time_input(
+            "Time", key="time_start", label_visibility="collapsed")
+
+        st.sidebar.subheader('End')
+        col3, col4 = st.sidebar.columns(2)
+        self.date_end = col3.date_input(
+            "Date", key="date_end", label_visibility="collapsed")
+        self.time_end = col4.time_input(
+            "Time", key="time_end", label_visibility="collapsed")
+
         st.sidebar.header('Plot Settings')
 
+        st.sidebar.subheader('Bins')
+        self.bins = st.sidebar.slider(
+            "bins", 1, 50, 24, label_visibility="collapsed")
         st.sidebar.subheader('Width')
-        width = st.sidebar.slider(
+        self.plot_width = st.sidebar.slider(
             "plot width", 1, 25, 16, label_visibility="collapsed")
         st.sidebar.subheader('Height')
-        height = st.sidebar.slider(
-            "plot height", 1, 25, 9, label_visibility="collapsed")
+        self.plot_height = st.sidebar.slider(
+            "plot height", 1, 25, 8, label_visibility="collapsed")
 
-        self.fig, self.ax = plt.subplots(figsize=(width, height))
         self.show_plot()
 
     def show_plot(self):
+        st.subheader(
+            'Online users distribution')
         with st.spinner():
             raw_data = get(API_URL + '/status').json()
-            data = preprocess_data(raw_data)
-            self.ax.hist(data)
-            self.ax.set_xlabel('Time')
-            self.ax.set_ylabel('# of users with aggregated online time')
-            plt.title('Online statistic distribution')
-            self.ax.legend()
-            st.pyplot(self.fig)
+            data = preprocess_data_for_general_distribution(
+                raw_data)  # TODO: add time interval params
+
+            fig, ax = plt.subplots(
+                figsize=(self.plot_width, self.plot_height))
+
+            sns.histplot(data, ax=ax, bins=self.bins,
+                         alpha=0.25, color='blue', kde=True)
+            ax.set_xlim(0, 24)
+            ax.set_xticks(range(0, 25, 1))
+            ax.set_xlabel('Day Time')
+            ax.set_ylabel('Aggregated Users Online')
+            st.pyplot(fig)
 
 
 if __name__ == '__main__':

@@ -13,23 +13,27 @@ class MainPage():
         init_app(self.PAGE_NAME)
         st.title(self.PAGE_NAME)
 
-        st.sidebar.header('Date & Time Interval')
+        st.sidebar.header('Date & Time Interval (UTC)')
 
         st.sidebar.subheader('Start')
-        self.date_start = st.sidebar.date_input(
+        col1, col2 = st.sidebar.columns(2)
+        self.date_start = col1.date_input(
             "Date", key="date_start", label_visibility="collapsed")
-        self.time_start = st.sidebar.time_input(
+        self.time_start = col2.time_input(
             "Time", key="time_start", label_visibility="collapsed")
 
         st.sidebar.subheader('End')
-        self.date_end = st.sidebar.date_input(
+        col3, col4 = st.sidebar.columns(2)
+        self.date_end = col3.date_input(
             "Date", key="date_end", label_visibility="collapsed")
-        self.time_end = st.sidebar.time_input(
+        self.time_end = col4.time_input(
             "Time", key="time_end", label_visibility="collapsed")
 
-        st.sidebar.header('Intercations Threshold')
+        st.sidebar.header('Intercations Threshold (%)')
+        st.sidebar.caption(
+            'The lower the number, the more connected users will be')
         interactions_threshold = st.sidebar.slider(
-            "Threshold", 0, 100, 10, label_visibility="collapsed") / 100
+            "Threshold", 0, 100, 10, label_visibility="collapsed", format="%d%%") / 100
 
         st.sidebar.subheader('Physics')
         physics = st.sidebar.checkbox('Physics')
@@ -38,9 +42,12 @@ class MainPage():
             interactions_threshold=interactions_threshold, physics=physics)
 
     def show_graph(self, interactions_threshold, physics):
+        st.subheader(
+            'Possible users interactions graph')
         with st.spinner():
             raw_data = get(API_URL + "/status").json()
             data = preprocess_data(raw_data)
+
             graph = init_graph_with_sliding_window(
                 data, time_period_seconds=20)
 
