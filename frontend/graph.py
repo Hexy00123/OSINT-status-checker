@@ -7,9 +7,8 @@ import datetime
 from requests import get
 from config import API_URL
 
-
 st.title("Graph")
-st.spinner()
+
 
 def make_graph(g: dict, r=400):
     nodes = []
@@ -120,13 +119,14 @@ def sliding_window(preprocessed, time_period_seconds=40):
     return graph
 
 
-raw_data = get(API_URL + "/status").json()
-data = preprocess(raw_data)
-graph = sliding_window(data, time_period_seconds=20)
+with st.spinner():
+    raw_data = get(API_URL + "/status").json()
+    data = preprocess(raw_data)
+    graph = sliding_window(data, time_period_seconds=20)
 
-if 'nodes' not in st.session_state:
-    st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(
-        graph, r=500)
+    if 'nodes' not in st.session_state:
+        st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(
+            graph, r=500)
 
-agraph(nodes=st.session_state.nodes, edges=st.session_state.edges,
-       config=st.session_state.config)
+    agraph(nodes=st.session_state.nodes, edges=st.session_state.edges,
+           config=st.session_state.config)
