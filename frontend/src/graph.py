@@ -1,8 +1,5 @@
 import streamlit as st
 from streamlit_agraph import agraph, Node, Edge, Config
-from random import randint
-from itertools import permutations, combinations
-from math import cos, sin, pi, log, exp
 import datetime
 from requests import get
 from config import API_URL
@@ -10,48 +7,51 @@ from config import API_URL
 st.title("Graph")
 
 
-def make_graph(g: dict, r=400):
+def make_graph(g: dict):
     nodes = []
     edges = []
 
     users = list({node for pair in g.keys() for node in pair})
-    for i, node in enumerate(users):
-        nodes.append(Node(
-            id=i, label=node, size=15,
-        ))
+    added_nodes = set()
 
     min_edge, max_edge = min(g.values()), max(g.values())
     for pair, edge in g.items():
-        if edge > min_edge + 10:
+        if edge >= min_edge + (max_edge - min_edge) * 0.13:
+            if pair[0] not in added_nodes:
+                nodes.append(Node(id=pair[0], label=pair[0], size=15))
+                added_nodes.add(pair[0])
+            if pair[1] not in added_nodes:
+                nodes.append(Node(id=pair[1], label=pair[1], size=15))
+                added_nodes.add(pair[1])
+
             edges.append(Edge(
-                source=users.index(pair[0]),
+                source=pair[0],
                 label=str(edge),
-                target=users.index(pair[1]),
+                target=pair[1],
                 color={
                     'color': '#999999',
-                    'highlight': '#FF0000',
+                    'highlight': '#CC0000',
                 },
                 value=edge,
                 scaling={
                     'min': 1,
-                    'max': 5,
+                    'max': 6,
                     'label': {
                         'enabled': False
                     }
                 },
-                chosen={
-                    'edge': {
-                        'shadow': True,
-                        'shadowColor': '#000000'
-                    }
-                },
             ))
+
+    # for i, node in enumerate(users):
+    #     nodes.append(Node(
+    #         id=i, label=node, size=15,
+    #     ))
 
     config = Config(
         width=1600,
         directed=False,
-        static=True,
-        physics=True,
+        static=False,
+        physics=0,
     )
 
     return nodes, edges, config
@@ -71,7 +71,7 @@ def preprocess(data):
             'is_online': user['is_online']
         })
 
-    preprocessed = sorted(preprocessed, key=lambda x: x['ts'])
+    preprocessed = sorted(filter(lambda x: x['is_online'], preprocessed), key=lambda x: x['ts'])
     return preprocessed
 
 
@@ -125,8 +125,7 @@ with st.spinner():
     graph = sliding_window(data, time_period_seconds=20)
 
     if 'nodes' not in st.session_state:
-        st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(
-            graph, r=500)
+        st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(graph)
 
     agraph(nodes=st.session_state.nodes, edges=st.session_state.edges,
            config=st.session_state.config)
