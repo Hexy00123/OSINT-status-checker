@@ -9,6 +9,8 @@ class UsersPage:
     def __init__(self):
         init_app(self.PAGE_NAME)
         st.title(self.PAGE_NAME)
+        st.caption(
+            "Only Telegram users are applicable")
 
         col1, col2 = st.columns([5, 1])
         with col1:
