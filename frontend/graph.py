@@ -5,12 +5,10 @@ from itertools import permutations, combinations
 from math import cos, sin, pi, log, exp
 import datetime
 from requests import get
-
-URL = 'http://158.160.101.116:8000'
+from config import API_URL
 
 
 st.title("Graph")
-# TODO
 
 
 def make_graph(g: dict, r=400):
@@ -51,8 +49,7 @@ def make_graph(g: dict, r=400):
             ))
 
     config = Config(
-        # width=200,
-        # height=1000,
+        width=1600,
         directed=False,
         static=True,
         physics=False,
@@ -123,7 +120,7 @@ def sliding_window(preprocessed, time_period_seconds=40):
     return graph
 
 
-raw_data = get(URL + "/status").json()
+raw_data = get(API_URL + "/status").json()
 data = preprocess(raw_data)
 graph = sliding_window(data, time_period_seconds=45)
 

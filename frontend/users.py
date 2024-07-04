@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
-
-API_URL = "https://localhost:8000/users"
+from config import API_URL
 
 
 def fetch_users():
