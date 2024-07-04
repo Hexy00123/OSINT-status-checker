@@ -9,7 +9,7 @@ from config import API_URL
 
 
 st.title("Graph")
-
+st.spinner()
 
 def make_graph(g: dict, r=400):
     nodes = []
@@ -23,7 +23,7 @@ def make_graph(g: dict, r=400):
 
     min_edge, max_edge = min(g.values()), max(g.values())
     for pair, edge in g.items():
-        if edge > min_edge + (max_edge - min_edge) * 0.2:
+        if edge > min_edge + 10:
             edges.append(Edge(
                 source=users.index(pair[0]),
                 label=str(edge),
@@ -52,7 +52,7 @@ def make_graph(g: dict, r=400):
         width=1600,
         directed=False,
         static=True,
-        physics=False,
+        physics=True,
     )
 
     return nodes, edges, config
@@ -122,7 +122,7 @@ def sliding_window(preprocessed, time_period_seconds=40):
 
 raw_data = get(API_URL + "/status").json()
 data = preprocess(raw_data)
-graph = sliding_window(data, time_period_seconds=45)
+graph = sliding_window(data, time_period_seconds=20)
 
 if 'nodes' not in st.session_state:
     st.session_state.nodes, st.session_state.edges, st.session_state.config = make_graph(
